@@ -36,6 +36,7 @@
     <script src="https://maps.googleapis.com/maps/api/js?key=" async defer>
     </script>
     <script>
+        console.log("init");
         var map;
         function initMap() {
           var data = new Array();
@@ -353,14 +354,43 @@
         //document.addEventListener('onLoad',initMap());
       </script>
       <script type="text/javascript">
+        console.log("before jQuery");
         $(document).ready(function(){
           alert("jQueryファイルの読み込み完了でーす。");
         });
+        </script>
+        <script>
+          var wp_url_admin_ajax = 'http://takano.local/wp-admin/admin-ajax.php';
+          jQuery(function($){
+            console.log("beforeajax");
+            $.ajax({
+              type: 'POST',
+              url: wp_url_admin_ajax,
+              crossDomain: true,
+              data: {
+                'action' : 'tell_me'
+              },
+              success: function (response) {
+                console.log("ajaxOK!!");
+                alert(response);
+                console.log(response);
+                /*
+                json = eval("(" + response + ")");
+                if (json.err) {
+                  result = "error:404";
+                } else {
+                  alert(response);
+                  console.log(json);
+                }*/
+              }
+            });
+          });
         </script>
 </head>
 
 <body onload="initMap();">
   <app-root></app-root>
+  <button id="submit">Ajax</button>
 </body>
 
 </html>
