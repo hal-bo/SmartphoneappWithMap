@@ -20,10 +20,15 @@
       /* Always set the map height explicitly to define the size of the div
        * element that contains the map. */
       #map {
-        height: 50%;
-        width: 80%;
-        background-color: aqua;
+        margin: 10px;
+        height: 90%;
+        width: 90%;
       }
+
+      #list{
+        height: 50px;
+      }
+
       /* Optional: Makes the sample page fill the window. */
       html, body {
         height: 100%;
@@ -37,14 +42,9 @@
     </script>
     <script>
         console.log("init");
-        var map;
         function initMap() {
-          var data = new Array();
-          data.push({lat:'33.108218', lng:'139.80102',name:'ホタル水路'});
-          data.push({lat:'33.113154', lng:'139.835',name:'登龍峠展望'});
-          data.push({lat:'33.139168', lng:'139.762',name:'八丈富士'});
           var myLatLng = {lat: 33.100, lng: 139.800};
-          var map = new google.maps.Map(document.getElementById('map'), {
+          map = new google.maps.Map(document.getElementById('map'), {
               zoom: 10,
               center: myLatLng
             });
@@ -329,19 +329,11 @@
               ]
             }
           ];
-          var styleMapOptions = {name: 'Map観光'}
+          var styleMapOptions = {name: 'Map観光'};
           var sampleType = new google.maps.StyledMapType(styleOptions,styleMapOptions);
           map.mapTypes.set('sample',sampleType);
           map.setMapTypeId('sample');
-          var markers = new Array();
-          for(i=0;i<data.length;i++){
-            markers[i] = new google.maps.Marker({
-              position: new google.maps.LatLng(data[i].lat, data[i].lng),
-              map: map,
-              title: 'Markers'
-            });
-            dispInfo(markers[i],data[i].name);
-          }
+          addMarker(["ふれあい牧場",33.131167,139.767181,'ホタル水路',33.108218,139.80102],map);
         }
         function dispInfo(marker,name) {
           google.maps.event.addListener(marker, 'click',
@@ -352,45 +344,126 @@
         }
 
         //document.addEventListener('onLoad',initMap());
-      </script>
-      <script type="text/javascript">
-        console.log("before jQuery");
-        $(document).ready(function(){
-          alert("jQueryファイルの読み込み完了でーす。");
-        });
-        </script>
-        <script>
-          var wp_url_admin_ajax = 'http://takano.local/wp-admin/admin-ajax.php';
-          jQuery(function($){
-            console.log("beforeajax");
-            $.ajax({
-              type: 'POST',
-              url: wp_url_admin_ajax,
-              crossDomain: true,
-              data: {
-                'action' : 'tell_me'
-              },
-              success: function (response) {
-                console.log("ajaxOK!!");
-                alert(response);
-                console.log(response);
-                /*
-                json = eval("(" + response + ")");
-                if (json.err) {
-                  result = "error:404";
-                } else {
-                  alert(response);
-                  console.log(json);
-                }*/
-              }
+
+        function addMarker(placeData,map){
+          var data = new Array();
+          for(i=0;i<placeData.length/3;i++){
+            console.log({lat: placeData[i*3+1], lng: placeData[i*3+2], name: placeData[i*3]});
+            data.push({lat: placeData[i*3+1], lng: placeData[i*3+2], name: placeData[i*3]});
+          }
+          var markers = new Array();
+          for(i=0;i<data.length;i++){
+            markers[i] = new google.maps.Marker({
+              position: new google.maps.LatLng(data[i].lat, data[i].lng),
+              map: map,
+              title: 'Markers'
             });
-          });
-        </script>
+            dispInfo(markers[i],data[i].name);
+          }
+        }
+      </script>
 </head>
 
-<body onload="initMap();">
+<body onload="load();">
   <app-root></app-root>
-  <button id="submit">Ajax</button>
+    <script type="text/javascript">
+      console.log("before jQuery");
+      $(document).ready(function(){
+        //alert("jQueryファイルの読み込み完了でーす。");
+      });
+      </script>
+      <script>
+        var wp_url_admin_ajax = 'http://takano.local/wp-admin/admin-ajax.php';
+        jQuery(function($){
+          console.log("beforeajax");
+          $.ajax({
+            type: 'POST',
+            url: wp_url_admin_ajax,
+            crossDomain: true,
+            data: {
+              'action' : 'tell_me'
+            },
+            dataType: 'json',
+            success: function (response,text, jqXHR) {
+              console.log("ajaxOK!!");
+              var spot = jqXHR.responseJSON
+              for (var i = 0; i < spot.length/3; i++) {
+                var name = document.createElement('ion-label');
+                var place = document.createElement('ion-item');
+                name.textContent = spot[i*3];
+                place.textContent = ' 緯度:'+spot[i*3+1]+' 経度:'+spot[i*3+2];
+                document.getElementById('ion-list').appendChild(name);
+                document.getElementById('ion-list').appendChild(place);
+              }
+            }
+          });
+        });
+
+        function btnAjax(){
+          $.ajax({
+            type: 'POST',
+            url: wp_url_admin_ajax,
+            crossDomain: true,
+            data: {
+              'action' : 'tell_me'
+            },
+            dataType: 'json',
+            success: function (response,text, jqXHR) {
+              console.log("ajaxOK!!");
+              element = document.getElementById('ion-list');
+              while (element.firstChild) {
+                element.removeChild(element.firstChild);
+              }
+              var spot = jqXHR.responseJSON;
+              addMarker(spot,map);
+              for (var i = 0; i < spot.length/3; i++) {
+                var name = document.createElement('ion-label');
+                var place = document.createElement('ion-item');
+                name.textContent = spot[i*3];
+                place.textContent = ' 緯度:'+spot[i*3+1]+' 経度:'+spot[i*3+2];
+                element.appendChild(name);
+                element.appendChild(place);
+              }
+            }
+          });
+        }
+
+        function load(){
+          initMap();
+          btnAjax();
+        }
+
+        function searchPlace(){
+          console.log('search');
+          $.ajax({
+            type: 'POST',
+            url: wp_url_admin_ajax,
+            crossDomain: true,
+            data: {
+              'action' : 'tell_me',
+              'word': document.getElementById('search-word').value
+            },
+            dataType: 'json',
+            success: function (response,text, jqXHR) {
+              console.log("ajaxOK!!");
+              element = document.getElementById('ion-list');
+              while (element.firstChild) {
+                element.removeChild(element.firstChild);
+              }
+              var spot = jqXHR.responseJSON;
+              for (var i = 0; i < spot.length/3; i++) {
+                var name = document.createElement('ion-label');
+                var place = document.createElement('ion-item');
+                name.textContent = spot[i*3];
+                place.textContent = ' 緯度:'+spot[i*3+1]+' 経度:'+spot[i*3+2];
+                element.appendChild(name);
+                element.appendChild(place);
+              }
+            }
+          });
+        }
+
+      </script>
 </body>
 
 </html>
