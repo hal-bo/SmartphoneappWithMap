@@ -28,12 +28,58 @@
       #list{
         height: 50px;
       }
-
+      h1{
+        background-color: cadetblue;
+        color: white;
+        width: 200px;
+        border-bottom: solid 4px #627295;
+        border-radius: 10px;
+      }
+      h3{
+        background-color:darkseagreen;
+        color: white;
+        width: 300px;
+        text-align: center;
+      }
       /* Optional: Makes the sample page fill the window. */
       html, body {
         height: 100%;
         margin: 0;
         padding: 0;
+      }
+
+      .map{
+        border-radius: 50px;
+        border-width: 20px;
+      }
+      .btn-square {
+        display: inline-block;
+        padding: 0.5em 1em;
+        text-decoration: none;
+        background: #668ad8;/*ボタン色*/
+        color: #FFF;
+        border-bottom: solid 4px #627295;
+        border-radius: 3px;
+      }
+      .btn-square:active {
+        /*ボタンを押したとき*/
+        -webkit-transform: translateY(4px);
+        transform: translateY(4px);/*下に動く*/
+        border-bottom: none;/*線を消す*/
+      }
+      .search_container{
+        box-sizing: border-box;
+      }
+      .search_container input[type="text"]{
+        border: 1px solid #999;
+        padding: 3px 5px;
+        border-radius: 20px;
+        height: 2.0em;
+        width: 245px;
+        overflow: hidden;
+      }
+      .search_container input[type="text"]:focus {
+        outline: 0;
       }
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -474,13 +520,7 @@
 
 <body onload="load();">
   <app-root></app-root>
-    <script type="text/javascript">
-      $(document).ready(function(){
-        //ssalert("jQueryファイルの読み込み完了でーす。");
-      });
-      </script>
-      <script>
-      </script>
+
 </body>
 
 </html>
