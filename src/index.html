@@ -41,7 +41,11 @@
     <script src="https://maps.googleapis.com/maps/api/js?key=" async defer>
     </script>
     <script>
-        console.log("init");
+      function load(){
+          initMap();
+          btnAjax();
+          console.log("loading...")
+        }
         function initMap() {
           var myLatLng = {lat: 33.100, lng: 139.800};
           map = new google.maps.Map(document.getElementById('map'), {
@@ -340,7 +344,6 @@
           function(event) {
             new google.maps.InfoWindow
             ({content:name}).open(marker.getMap(), marker);
-            voice(name);
           });
         }
 
@@ -362,40 +365,8 @@
             dispInfo(markers[i],data[i].name);
           }
         }
-      </script>
-</head>
-
-<body onload="load();">
-  <app-root></app-root>
-    <script type="text/javascript">
-      $(document).ready(function(){
-        //ssalert("jQueryファイルの読み込み完了でーす。");
-      });
-      </script>
-      <script>
         var wp_url_admin_ajax = 'http://takano.local/wp-admin/admin-ajax.php';
-        jQuery(function($){
-          $.ajax({
-            type: 'POST',
-            url: wp_url_admin_ajax,
-            crossDomain: true,
-            data: {
-              'action' : 'tell_me'
-            },
-            dataType: 'json',
-            success: function (response,text, jqXHR) {
-              var spot = jqXHR.responseJSON
-              for (var i = 0; i < spot.length/3; i++) {
-                var name = document.createElement('ion-label');
-                var place = document.createElement('ion-item');
-                name.textContent = spot[i*3];
-                place.textContent = ' 緯度:'+spot[i*3+1]+' 経度:'+spot[i*3+2];
-                document.getElementById('ion-list').appendChild(name);
-                document.getElementById('ion-list').appendChild(place);
-              }
-            }
-          });
-        });
+
 
         function btnAjax(){
           $.ajax({
@@ -423,12 +394,6 @@
               }
             }
           });
-        }
-
-        function load(){
-          initMap();
-          btnAjax();
-          console.log("loading...")
         }
 
         function searchPlace(){
@@ -499,10 +464,22 @@
                 element.appendChild(place);
                 element.appendChild(content);
               }
+              addMarker([tweets[i*4+3],tweets[i*4+1],tweets[i*4+2]],map);
             }
           });
         }
 
+      </script>
+</head>
+
+<body onload="load();">
+  <app-root></app-root>
+    <script type="text/javascript">
+      $(document).ready(function(){
+        //ssalert("jQueryファイルの読み込み完了でーす。");
+      });
+      </script>
+      <script>
       </script>
 </body>
 
