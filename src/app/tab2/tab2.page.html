@@ -1,14 +1,19 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>
-      近くのスポット
+      スポット
     </ion-title>
   </ion-toolbar>
 </ion-header>
 <ion-content>
-    <h1>近くのスポット</h1>
-    <input type="button" id="ajax" value="更新" onclick="load();" />
-    <ion-list id="ion-list">
+    <h1>スポット検索</h1>
+<!--   <input type="button" id="ajax" value="更新" onclick="load();" /> -->
+    <form name="myform">
+        <input id="search-word" name="mytext" type="text" />
+        <button id="search" onclick="searchPlace();">検索</button>
+      </form>
+      <h3>スポットリスト</h3>
+    <ion-list id="spot-list">
         <ion-list-header>
           <!--<ion-label>近くのスポット</ion-label>-->
         </ion-list-header>

@@ -1,14 +1,20 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>
-      検索
+      つぶやき
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-    <form name="myform">
-      <input id="search-word" name="mytext" type="text" />
-      <button id="search" onclick="searchPlace();">検索</button>
+    <h1>つぶやく</h1>
+    <form name="tweet">
+      <input id="tweet-word" name="mytweet" type="text" />
+      <button id="tweet" onclick="addVoice();">つぶやく</button>
     </form>
+    <h3>つぶやきリスト</h3>
+    <ion-list id="tweet-list">
+      <ion-list-header>
+      </ion-list-header>
+    </ion-list>
 </ion-content>

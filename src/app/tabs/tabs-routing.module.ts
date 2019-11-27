@@ -38,6 +38,10 @@ const routes: Routes = [
         ]
       },
       {
+        path: 'word',
+        redirectTo: '/tabs/tab2'
+      },
+      {
         path: '',
         redirectTo: '/tabs/tab1',
         pathMatch: 'full'

@@ -340,6 +340,7 @@
           function(event) {
             new google.maps.InfoWindow
             ({content:name}).open(marker.getMap(), marker);
+            voice(name);
           });
         }
 
@@ -367,15 +368,13 @@
 <body onload="load();">
   <app-root></app-root>
     <script type="text/javascript">
-      console.log("before jQuery");
       $(document).ready(function(){
-        //alert("jQueryファイルの読み込み完了でーす。");
+        //ssalert("jQueryファイルの読み込み完了でーす。");
       });
       </script>
       <script>
         var wp_url_admin_ajax = 'http://takano.local/wp-admin/admin-ajax.php';
         jQuery(function($){
-          console.log("beforeajax");
           $.ajax({
             type: 'POST',
             url: wp_url_admin_ajax,
@@ -385,7 +384,6 @@
             },
             dataType: 'json',
             success: function (response,text, jqXHR) {
-              console.log("ajaxOK!!");
               var spot = jqXHR.responseJSON
               for (var i = 0; i < spot.length/3; i++) {
                 var name = document.createElement('ion-label');
@@ -409,7 +407,6 @@
             },
             dataType: 'json',
             success: function (response,text, jqXHR) {
-              console.log("ajaxOK!!");
               element = document.getElementById('ion-list');
               while (element.firstChild) {
                 element.removeChild(element.firstChild);
@@ -431,10 +428,10 @@
         function load(){
           initMap();
           btnAjax();
+          console.log("loading...")
         }
 
         function searchPlace(){
-          console.log('search');
           $.ajax({
             type: 'POST',
             url: wp_url_admin_ajax,
@@ -445,12 +442,12 @@
             },
             dataType: 'json',
             success: function (response,text, jqXHR) {
-              console.log("ajaxOK!!");
-              element = document.getElementById('ion-list');
+              element = document.getElementById('spot-list');
               while (element.firstChild) {
                 element.removeChild(element.firstChild);
               }
               var spot = jqXHR.responseJSON;
+              addMarker(spot,map);
               for (var i = 0; i < spot.length/3; i++) {
                 var name = document.createElement('ion-label');
                 var place = document.createElement('ion-item');
@@ -458,6 +455,49 @@
                 place.textContent = ' 緯度:'+spot[i*3+1]+' 経度:'+spot[i*3+2];
                 element.appendChild(name);
                 element.appendChild(place);
+              }
+            }
+          });
+        }
+
+        function addVoice(){
+          var voice = document.getElementById('tweet-word');
+          alert(voice.value);
+          if(voice.value ==""){
+            alert("未入力です");
+            return
+          }
+          var LatLng = map.getCenter;
+          var lat = LatLng.lat;
+          var lng = LatLng.lng;
+          $.ajax({
+            type: 'POST',
+            url: wp_url_admin_ajax,
+            crossDomain: true,
+            data: {
+              'action' : 'tweet_voice',
+              'voice': voice.value,
+              'author': 'Haruto Takano',
+              'lng': 33.100,
+              'lat': 139.800
+            },
+            dataType: 'json',
+            success: function (response,text, jqXHR) {
+              element = document.getElementById('tweet-list');
+              while (element.firstChild) {
+                element.removeChild(element.firstChild);
+              }
+              var tweets = jqXHR.responseJSON;
+              for (var i = 0; i < tweets.length/4; i++) {
+                var name = document.createElement('ion-label');
+                var place = document.createElement('ion-item');
+                var content = document.createElement('ion-item');
+                name.textContent = tweets[i*4];
+                place.textContent = ' 緯度:'+tweets[i*4+1]+' 経度:'+tweets[i*3+2];
+                content.textContent = tweets[i*4+3];
+                element.appendChild(name);
+                element.appendChild(place);
+                element.appendChild(content);
               }
             }
           });
