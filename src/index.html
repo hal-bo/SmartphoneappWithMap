@@ -385,11 +385,19 @@
           map.setMapTypeId('sample');
           addMarker(["ふれあい牧場",33.131167,139.767181,'ホタル水路',33.108218,139.80102],map);
         }
-        function dispInfo(marker,name) {
+        function dispInfo(marker,name,lat,lng) {
           google.maps.event.addListener(marker, 'click',
           function(event) {
             new google.maps.InfoWindow
             ({content:name}).open(marker.getMap(), marker);
+            var place = {
+              'name': name,
+              'lat': lat,
+              'lng': lng
+            };
+            var setjson = JSON.stringify(place);
+            localStorage.setItem('place', setjson);
+
           });
         }
 
@@ -408,7 +416,7 @@
               map: map,
               title: 'Markers'
             });
-            dispInfo(markers[i],data[i].name);
+            dispInfo(markers[i],data[i].name,data[i].lat,data[i].lng);
           }
         }
         var wp_url_admin_ajax = 'http://takano.local/wp-admin/admin-ajax.php';
@@ -478,9 +486,9 @@
             alert("未入力です");
             return
           }
-          var LatLng = map.getCenter;
-          var lat = LatLng.lat;
-          var lng = LatLng.lng;
+          var place_json=localStorage.getItem('place');
+          var place = JSON.parse(place_json);
+          //addMarker([voice.value,place.lng,place.lat],map);
           $.ajax({
             type: 'POST',
             url: wp_url_admin_ajax,
@@ -488,9 +496,10 @@
             data: {
               'action' : 'tweet_voice',
               'voice': voice.value,
+              'name' : place.name,
               'author': 'Haruto Takano',
-              'lng': 33.100,
-              'lat': 139.800
+              'lng': place.lng,
+              'lat': place.lat
             },
             dataType: 'json',
             success: function (response,text, jqXHR) {
@@ -510,7 +519,6 @@
                 element.appendChild(place);
                 element.appendChild(content);
               }
-              addMarker([tweets[i*4+3],tweets[i*4+1],tweets[i*4+2]],map);
             }
           });
         }
